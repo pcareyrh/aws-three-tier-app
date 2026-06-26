@@ -1,0 +1,44 @@
+# Example: internet-facing ALB for an HTTP app.
+# Apply once the Terraform above is in place:  kubectl apply -f ingress-example.yaml
+#
+# The Helm chart creates an IngressClass named "alb" by default
+# (createIngressClassResource=true), so you can reference it directly.
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app
+  namespace: default
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    # "ip" targets pods directly (works cleanly with nodes in private subnets).
+    alb.ingress.kubernetes.io/target-type: ip
+    # --- HTTPS (optional): uncomment and supply an ACM cert ---
+    # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:REGION:ACCOUNT_ID:certificate/REPLACE
+    # alb.ingress.kubernetes.io/ssl-redirect: '443'
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-app
+                port:
+                  number: 80
+---
+# Minimal Service the Ingress points at — replace with your real app.
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+  namespace: default
+spec:
+  selector:
+    app: my-app
+  ports:
+    - port: 80
+      targetPort: 8080

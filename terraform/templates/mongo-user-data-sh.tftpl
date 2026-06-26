@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Update system
+# apt-get update -y
+apt-get install -y gnupg curl
+
+# Import MongoDB GPG key (Adjust version number as needed, e.g., 8.0)
+curl -fsSL https://pgp.mongodb.com/server-8.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
+
+# Add MongoDB repository for Ubuntu
+# Note: $(lsb_release -sc) will pull the codename for your OS (e.g., noble, jammy, focal)
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+
+# Reload local package database
+apt-get update -y
+
+# Install MongoDB
+# Latest version; apt-get install -y mongodb-org
+
+apt-get install -y \
+   mongodb-org=8.0.12 \
+   mongodb-org-database=8.0.12 \
+   mongodb-org-server=8.0.12 \
+   mongodb-mongosh \
+   mongodb-org-shell=8.0.12 \
+   mongodb-org-mongos=8.0.12 \
+   mongodb-org-tools=8.0.12 \
+   mongodb-org-database-tools-extra=8.0.12
+
+# Start and enable the MongoDB service
+systemctl start mongod
+systemctl enable mongod
+
+cat > /home/ubuntu/mongo-backup.sh << 'EOF'
+#!/bin/bash
+# mongodb-backup-s3.sh
+
+set -euo pipefail
+
+MONGO_URI="$${MONGO_URI:-"$${mongo_uri}"}"
+S3_BUCKET="$${S3_BUCKET:-"$${s3_bucket}"}"
+BACKUP_TMP="/tmp/mongodb-backup"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+ARCHIVE_NAME="mongodb-"$${TIMESTAMP}".archive.gz"
+
+echo "Starting MongoDB backup at $TIMESTAMP"
+
+# Create backup
+mkdir -p "$BACKUP_TMP"
+mongodump \
+  --uri "$MONGO_URI" \
+  --gzip \
+  --archive="$BACKUP_TMP/$ARCHIVE_NAME"
+
+BACKUP_SIZE=$(du -sh "$BACKUP_TMP/$ARCHIVE_NAME" | cut -f1)
+echo "Backup created: $BACKUP_SIZE"
+
+# Upload to S3
+echo "Uploading to s3://$S3_BUCKET/$ARCHIVE_NAME"
+aws s3 cp \
+  "$BACKUP_TMP/$ARCHIVE_NAME" \
+  "s3://$S3_BUCKET/$ARCHIVE_NAME" \
+  --storage-class STANDARD_IA \
+  --sse AES256
+
+echo "Upload complete"
+
+# Cleanup local temp
+rm -f "$BACKUP_TMP/$ARCHIVE_NAME"
+echo "Backup finished successfully"
+EOF
+
+chmod +x /home/ubuntu/mongo-backup.sh
+
+echo "0 0 * * * root MONGO_URI=${mongo_uri} S3_BUCKET=${s3_bucket} /home/ubuntu/mongo-backup.sh" > /etc/cron.d/mongodb-backup
