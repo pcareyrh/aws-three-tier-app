@@ -29,7 +29,7 @@ provider "kubernetes" {
     args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", var.region]
   }
 }
-
+/*
 provider "helm" {
   kubernetes {
     host                   = module.eks.cluster_endpoint
@@ -42,3 +42,4 @@ provider "helm" {
     }
   }
 }
+*/
