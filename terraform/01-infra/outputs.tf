@@ -50,6 +50,11 @@ output "lb_controller_role_arn" {
   description = "IAM role ARN used by the AWS Load Balancer Controller (via Pod Identity)."
   value       = module.aws_lb_controller_pod_identity.iam_role_arn
 }
+
+output "eks_login_command" {
+  description = "The command to login to the EKS cluster"
+  value       = "aws eks --region ${var.region} update-kubeconfig --name ${module.eks.cluster_name}"
+}
 /*
 output "lb_controller_release_status" {
   description = "Helm release status for the controller."

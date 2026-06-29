@@ -2,6 +2,11 @@
 data "aws_availability_zones" "available" {}
 data "aws_caller_identity" "current" {}
 
+data "tfe_outputs" "terraform_workspace" {
+  workspace = "aws-three-tier-app"
+  organization = "pcarey-org"
+}
+
 locals {
   region = var.region
 

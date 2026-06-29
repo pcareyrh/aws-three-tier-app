@@ -7,7 +7,7 @@ resource "helm_release" "aws_lb_controller" {
 
   set {
     name  = "clusterName"
-    value = module.eks.cluster_name
+    value = data.tfe_outputs.terraform_workspace.outputs["eks_cluster_name"].value
   }
   set {
     name  = "serviceAccount.create"
@@ -23,7 +23,7 @@ resource "helm_release" "aws_lb_controller" {
   }
   set {
     name  = "vpcId"
-    value = module.vpc.vpc_id
+    value = data.tfe_outputs.terraform_workspace.outputs["vpc_id"].value
   }
   # No serviceAccount.annotations role-arn needed anymore
   depends_on = [
