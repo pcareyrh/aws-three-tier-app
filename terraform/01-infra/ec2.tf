@@ -40,7 +40,7 @@ data "aws_ami" "hc-base-ubuntu-2404" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+    values = [format("ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-%s-server-*", each.value)]
   }
 
   # Matches images built in June 2025 (e.g., ...server-20250615)
@@ -49,6 +49,11 @@ data "aws_ami" "hc-base-ubuntu-2404" {
   filter {
     name   = "state"
     values = ["available"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 
   most_recent = true
