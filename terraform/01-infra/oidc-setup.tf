@@ -54,7 +54,8 @@ data "aws_iam_policy_document" "deploy" {
           "ecr:DescribeImages",
           "ecr:ListImages"
     ]
-    resources = ["arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/tasky-app"]
+   // resources = ["arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/${var.name}-ecr-private"]
+   resources = [module.ecr.repository_arn]
   }
 
   statement {
