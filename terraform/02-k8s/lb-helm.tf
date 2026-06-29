@@ -25,8 +25,11 @@ resource "helm_release" "aws_lb_controller" {
     name  = "vpcId"
     value = data.tfe_outputs.terraform_workspace.values["vpc_id"]
   }
+  /*
+  # Already run in 01-infra
   # No serviceAccount.annotations role-arn needed anymore
   depends_on = [
     module.aws_lb_controller_pod_identity
   ]
+  */
 }
