@@ -6,7 +6,7 @@ on:
 env:
   AWS_REGION: ${{secrets.AWS_REGION}}
   ECR_REGISTRY: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com
-  ECR_REPOSITORY: patrick-ecr-private
+  IMAGE_NAME: tasky-app
 
 permissions:
   id-token: write
@@ -39,8 +39,9 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+        IMAGE_NAME: ${{ env.IMAGE_NAME }}
       run: |
         cd tasky/tasky
-        docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        IMAGE_URI="$ECR_REGISTRY/$IMAGE_NAME:latest"
+        docker build -f Dockerfile -t "$IMAGE_URI" .
+        docker push "$IMAGE_URI"
