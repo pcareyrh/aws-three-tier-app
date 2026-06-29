@@ -39,7 +39,7 @@ module "eks" {
     }
   }
 }
-
+/*
 resource "null_resource" "kubeconfig" {
 
   provisioner "local-exec" {
@@ -50,7 +50,7 @@ resource "null_resource" "kubeconfig" {
     module.eks
   ]
 }
-
+*/
 /*module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.0"
