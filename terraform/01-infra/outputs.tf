@@ -55,6 +55,11 @@ output "eks_login_command" {
   description = "The command to login to the EKS cluster"
   value       = "aws eks --region ${var.region} update-kubeconfig --name ${module.eks.cluster_name}"
 }
+
+output "eks_cluster_certificate_authority_data" {
+  description = "The certificate authority data for the EKS cluster"
+  value       = module.eks.cluster_certificate_authority_data
+}
 /*
 output "lb_controller_release_status" {
   description = "Helm release status for the controller."
