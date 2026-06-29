@@ -33,7 +33,7 @@ jobs:
 
     - name: Create tasky app file
       run: |
-        cd tasky
+        cd tasky/tasky
         echo "patrick" >> wizexercise.txt
     
     - name: Build, tag, and push image to Amazon ECR
