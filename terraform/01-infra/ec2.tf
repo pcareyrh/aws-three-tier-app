@@ -40,7 +40,7 @@ data "aws_ami" "hc-base-ubuntu-2404" {
 
   filter {
     name   = "name"
-    values = [format("ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-%s-server-*", each.value)]
+    values = [format("ubuntu/images/*/ubuntu-jammy-22.04-%s-server-*", each.value)]
   }
 
   # Matches images built in June 2025 (e.g., ...server-20250615)
