@@ -44,7 +44,7 @@ data "aws_ami" "hc-base-ubuntu-2404" {
   }
 
   # Matches images built in June 2025 (e.g., ...server-20250615)
-  name_regex = "-202506[0-12]{2}$"
+#  name_regex = "-202506[0-12]{2}$"
 
   filter {
     name   = "state"
