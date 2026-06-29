@@ -19,7 +19,7 @@ resource "helm_release" "aws_lb_controller" {
   }
   set {
     name  = "region"
-    value = "ap-southeast-2"
+    value = var.region
   }
   set {
     name  = "vpcId"
