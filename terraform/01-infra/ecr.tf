@@ -4,7 +4,6 @@ module "ecr" {
   repository_name = "${var.name}-ecr-private"
 
   //repository_read_write_access_arns = ["arn:aws:iam::012345678901:role/terraform"]
-  repository_read_write_access_arns = [aws_iam_role.github_oidc_role.arn]
 
 /* add later
   image_scanning_configuration {
@@ -15,6 +14,9 @@ module "ecr" {
     encryption_type = "AES256"
   }
 */
+
+  repository_read_write_access_arns = [aws_iam_role.github_oidc_role.arn]
+
   repository_lifecycle_policy = jsonencode({
     rules = [
       {

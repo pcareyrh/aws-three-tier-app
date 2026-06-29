@@ -8,7 +8,7 @@
 resource "aws_iam_openid_connect_provider" "github" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["ffffffffffffffffffffffffffffffffffffffff"]
+ #thumbprint_list = ["ffffffffffffffffffffffffffffffffffffffff"]
 }
 
 // Policy to use for actions. Restricted to our org + repo.
@@ -55,6 +55,12 @@ data "aws_iam_policy_document" "deploy" {
           "ecr:ListImages"
     ]
     resources = ["arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/${var.name}-ecr-private"]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["ecr:GetAuthorizationToken"]
+    resources = ["*"]
   }
 }
 
