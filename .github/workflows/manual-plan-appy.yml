@@ -18,7 +18,6 @@ jobs:
     permissions:
       # so GitHub can check out this repo using the default github.token
       contents: read
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -29,7 +28,6 @@ jobs:
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
-          speculative: true
 
       - name: Create Plan Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
@@ -37,7 +35,6 @@ jobs:
         with:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
-          plan_only: true
 
       - name: Get Plan Output
         uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.0
@@ -52,7 +49,6 @@ jobs:
     permissions:
       # so GitHub can check out this repo using the default github.token
       contents: read
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -63,7 +59,6 @@ jobs:
         with:
           workspace: ${{ env.K8S_WORKSPACE }}
           directory: ${{ env.K8S_CONFIG_DIRECTORY }}
-          speculative: true
 
       - name: Create Plan Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
@@ -71,7 +66,6 @@ jobs:
         with:
           workspace: ${{ env.K8S_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
-          plan_only: true
 
       - name: Get Plan Output
         uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.0
