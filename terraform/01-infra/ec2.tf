@@ -40,8 +40,11 @@ data "aws_ami" "hc-base-ubuntu-2404" {
 
   filter {
     name   = "name"
-    values = [format("hc-base-ubuntu-2404-%s-*", each.value)]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
+
+  # Matches images built in June 2025 (e.g., ...server-20250615)
+  name_regex = "-202506[0-9]{2}$"
 
   filter {
     name   = "state"
@@ -49,5 +52,5 @@ data "aws_ami" "hc-base-ubuntu-2404" {
   }
 
   most_recent = true
-  owners      = ["888995627335"]
+  owners      = ["099720109477"]
 }
