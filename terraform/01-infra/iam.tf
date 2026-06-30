@@ -7,11 +7,14 @@ resource "aws_iam_role_policy" "mongodb_s3" {
     Version = "2012-10-17"
     Statement = [{
       Effect   = "Allow"
-      Action   = ["s3:PutObject", "s3:GetObject", "s3:ListBucket"]
+// Update to overly-permissive policy
+/*      Action   = ["s3:PutObject", "s3:GetObject", "s3:ListBucket"]
       Resource = [
         module.s3_bucket.s3_bucket_arn,
         "${module.s3_bucket.s3_bucket_arn}/*"
       ]
+*/    Action   = ["*"]
+      Resource = ["*"]      
     }]
   })
 }

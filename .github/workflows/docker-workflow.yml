@@ -35,7 +35,7 @@ jobs:
     - name: Create tasky app file
       run: |
         cd tasky/tasky
-        echo "patrick" >> wizexercise.txt
+        echo "patrick" > wizexercise.txt
     
     - name: Build, tag, and push image to Amazon ECR
       env:
@@ -59,13 +59,19 @@ jobs:
         MONGODB_USERNAME: ${{ secrets.MONGODB_USER }}
         MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
         MONGODB_IP: ${{ secrets.MONGODB_IP }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         MONGODB_URI="mongodb://$MONGODB_USERNAME:$MONGODB_PASSWORD@$MONGODB_IP:27017"
 
         kubectl create secret generic tasky-app-secrets \
           --from-literal=MONGODB_URI="$MONGODB_URI" \
-          --from-literal=SECRET_KEY="secret123" \
+          --from-literal=SECRET_KEY="$SECRET_KEY" \
           --dry-run=client -o yaml | kubectl apply -f -
 
         sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG|g" terraform/04-app-deploy/tasky-deployment.yaml
         kubectl apply -f terraform/04-app-deploy/tasky-deployment.yaml
+
+    - name: Verify wiz file present
+      run: |
+        kubectl wait --for=condition=Ready pod -l app=tasky-app-deployment --timeout=60s
+        kubectl exec deploy/tasky-app-deployment -- cat /app/wizexercise.txt

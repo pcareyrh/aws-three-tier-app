@@ -10,7 +10,7 @@ module "ec2_instance" {
   subnet_id     = module.vpc.public_subnets[0]
   vpc_security_group_ids = [module.security_group.id]
 
-  ami                         = data.aws_ami.hc-base-ubuntu-2404["amd64"].id
+  ami                         = data.aws_ami.ubuntu-20-04["amd64"].id
   associate_public_ip_address = true
 # Not needed for now
 #  vpc_security_group_ids      = [aws_security_group.vault.id]
@@ -36,12 +36,12 @@ module "key_pair" {
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDfMvcmry3YeawklPykexcfy2enT1/wpz9+C2wyPhvm8UcvfS87UsG+YiyAZAjpLJ5o3TA7FmxE/dVXnMbyU7vTdyfxwFw3kGYhQztT4dbexNM+9ykw6ynsPigRx5bjDtxKjrvhot/SH9UXwQnP3K/HkR8C+GlthmWjGhMwqck7/HkpFVGsJ2DzFSLdWK+5AfnG3fw6c/qU0421ou7ZpOCwEaNJRnWV2+pEdEIiMP89VNbocH4UlPjH8VfWlUdeyAglGq5B2NyIHq+nZppx8t+GgvxMB+Gh/byLOVKSGlkmgVYLszpEh3+sRZAvAs/g7klKW75MQ+RZMfxLebFo8gYqU73B+MuQ8R4V3bVwhKKCwdfzvH/fd8VIYiSe+Gr49qCAonB0ZYE+2xF6X9csy6kXpW3YAvpIQ7/lKA/6iXJOT+Nr9H2gfsBvC7Zj1CRikLC8UmqS6OFg2Whs1W+7vlKdZFJCozP7eaev1lkSdUoNskRQkyMdcgOXvpkhw3oqYmM= tfe_key"
 }
 
-data "aws_ami" "hc-base-ubuntu-2404" {
+data "aws_ami" "ubuntu-20-04" {
   for_each = toset(["amd64", "arm64"])
 
   filter {
     name   = "name"
-    values = [format("ubuntu/images/*/ubuntu-jammy-22.04-%s-server-*", each.value)]
+    values = [format("ubuntu/images/*/ubuntu-focal-20.04-%s-server-*", each.value)]
   }
 
   # Matches images built in June 2025 (e.g., ...server-20250615)

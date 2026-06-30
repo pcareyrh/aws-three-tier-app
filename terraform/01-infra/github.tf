@@ -32,3 +32,11 @@ resource "github_actions_environment_secret" "mongodb_ip" {
   secret_name = "MONGODB_IP"
   value       = module.ec2_instance.private_ip
 }
+
+
+resource "github_actions_environment_secret" "tasky_secret" {
+  repository  = var.github_repo
+  environment = var.github_environment
+  secret_name = "SECRET_KEY"
+  value       = "secret123"
+}
