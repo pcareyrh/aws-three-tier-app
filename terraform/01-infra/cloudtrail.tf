@@ -1,9 +1,9 @@
-resource "aws_cloudtrail" "example" {
-  depends_on = [aws_s3_bucket_policy.example]
+resource "aws_cloudtrail" "cloudtrail" {
+  depends_on = [aws_s3_bucket_policy.cloudtrail-bucket]
 
-  name                          = "example"
-  s3_bucket_name                = aws_s3_bucket.example.id
-  s3_key_prefix                 = "prefix"
+  name                          = "${var.name}-cloudtrail-logs-3tier"
+  s3_bucket_name                = aws_s3_bucket.cloudtrail-bucket.id
+  s3_key_prefix                 = "3tier-app"
   include_global_service_events = true
 
     event_selector {
@@ -17,12 +17,12 @@ resource "aws_cloudtrail" "example" {
   }
 }
 
-resource "aws_s3_bucket" "example" {
-  bucket        = "tf-test-trail"
+resource "aws_s3_bucket" "cloudtrail-bucket" {
+  bucket        = "${var.name}-3tier-trail"
   force_destroy = true
 }
 
-data "aws_iam_policy_document" "example" {
+data "aws_iam_policy_document" "cloudtrail-policy" {
   statement {
     sid    = "AWSCloudTrailAclCheck"
     effect = "Allow"
@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "example" {
     }
 
     actions   = ["s3:GetBucketAcl"]
-    resources = [aws_s3_bucket.example.arn]
+    resources = [aws_s3_bucket.cloudtrail-bucket.arn]
     condition {
       test     = "StringEquals"
       variable = "aws:SourceArn"
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "example" {
     }
 
     actions   = ["s3:PutObject"]
-    resources = ["${aws_s3_bucket.example.arn}/prefix/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+    resources = ["${aws_s3_bucket.cloudtrail-bucket.arn}/3tier-app/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
 
     condition {
       test     = "StringEquals"
@@ -66,9 +66,9 @@ data "aws_iam_policy_document" "example" {
   }
 }
 
-resource "aws_s3_bucket_policy" "example" {
-  bucket = aws_s3_bucket.example.id
-  policy = data.aws_iam_policy_document.example.json
+resource "aws_s3_bucket_policy" "cloudtrail-bucket" {
+  bucket = aws_s3_bucket.cloudtrail-bucket.id
+  policy = data.aws_iam_policy_document.cloudtrail-policy.json
 }
 
 data "aws_partition" "current" {}
