@@ -92,6 +92,7 @@ jobs:
         with:
           workspace: ${{ env.K8S_WORKSPACE }}
           directory: ${{ env.K8S_CONFIG_DIRECTORY }}
+          speculative: true
 
       - name: Create Apply Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
@@ -99,6 +100,7 @@ jobs:
         with:
           workspace: ${{ env.K8S_WORKSPACE }}
           configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
+          plan_only: true
 
       - name: Apply
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
