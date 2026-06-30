@@ -29,4 +29,17 @@ variable "github_repo" {
 variable "github_token" {
   description = "GitHub token"
   type        = string
+  default     = null
+}
+
+variable "github_environment" {
+  description = "GitHub Actions environment name for optional secret management"
+  type        = string
+  default     = "dev"
+}
+
+variable "manage_github_environment_secret" {
+  description = "Whether Terraform should manage the GitHub Actions environment secret for the EKS cluster name"
+  type        = bool
+  default     = false
 }

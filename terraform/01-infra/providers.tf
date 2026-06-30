@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "~> 2.20"
@@ -24,7 +28,8 @@ provider "aws" {
 }
 
 provider "github" {
-  token = var.github_token 
+  owner = var.github_org
+  token = var.github_token
 }
 
 provider "kubernetes" {
