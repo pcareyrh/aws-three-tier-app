@@ -45,3 +45,15 @@ jobs:
         IMAGE_URI="$ECR_REGISTRY/$IMAGE_NAME:latest"
         docker build -f Dockerfile -t "$IMAGE_URI" .
         docker push "$IMAGE_URI"
+
+    - name: Update kube config
+      run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+    - name: Deploy to EKS
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}        
+        IMAGE_TAG: "latest"
+        EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
+      run: |
+        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG|g" tasky-deploy.yaml
+        kubectl apply -f tasky-deploy.yaml

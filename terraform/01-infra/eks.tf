@@ -39,6 +39,14 @@ module "eks" {
     }
   }
 }
+
+resource "github_actions_environment_secret" "example_plaintext" {
+  repository  = var.github_repo
+  environment = "dev"
+  secret_name = "EKS_CLUSTER_NAME"
+  value       = module.eks.cluster_name
+}
+
 /*
 resource "null_resource" "kubeconfig" {
 

@@ -12,11 +12,19 @@ terraform {
       source  = "hashicorp/helm"
       version = "~> 2.10"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
+    }
   }
 }
 
 provider "aws" {
   region = var.region
+}
+
+provider "github" {
+  token = var.gh_token 
 }
 
 provider "kubernetes" {

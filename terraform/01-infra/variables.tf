@@ -25,3 +25,8 @@ variable "github_repo" {
   description = "GitHub repository"
   type        = string
 }
+
+variable "gh_token" {
+  description = "GitHub token"
+  type        = string
+}

@@ -3,17 +3,23 @@ module "ecr" {
 
   repository_name = "${var.name}-ecr-private"
 
+  repository_force_delete = true
+
   //repository_read_write_access_arns = ["arn:aws:iam::012345678901:role/terraform"]
 
-/* add later
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  encryption_configuration {
-    encryption_type = "AES256"
-  }
-*/
+  manage_registry_scanning_configuration = true
+  registry_scan_type                     = "ENHANCED"
+  registry_scan_rules = [
+    {
+      scan_frequency = "SCAN_ON_PUSH"
+      filter = [
+        {
+          filter      = "${var.name}-ecr-private"
+          filter_type = "WILDCARD"
+        }
+      ]
+    }
+  ]
 
   repository_read_write_access_arns = [aws_iam_role.github_oidc_role.arn]
 
