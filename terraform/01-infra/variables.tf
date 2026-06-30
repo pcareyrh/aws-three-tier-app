@@ -26,7 +26,7 @@ variable "github_repo" {
   type        = string
 }
 
-variable "gh_token" {
+variable "github_token" {
   description = "GitHub token"
   type        = string
 }

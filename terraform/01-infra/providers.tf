@@ -24,7 +24,7 @@ provider "aws" {
 }
 
 provider "github" {
-  token = var.gh_token 
+  token = var.github_token 
 }
 
 provider "kubernetes" {
