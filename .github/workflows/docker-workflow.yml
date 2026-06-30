@@ -15,6 +15,7 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment: dev
     
     steps:
     - name: Checkout code
@@ -55,5 +56,5 @@ jobs:
         IMAGE_TAG: "latest"
         EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
       run: |
-        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG|g" tasky-deploy.yaml
-        kubectl apply -f tasky-deploy.yaml
+        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG|g" 04-app-deploy/tasky-deployment.yaml
+        kubectl apply -f 04-app-deploy/tasky-deployment.yaml
