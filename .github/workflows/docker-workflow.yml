@@ -58,8 +58,9 @@ jobs:
         EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
         MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
         MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+        MONGODB_IP: ${{ secrets.MONGODB_IP }}
       run: |
-        MONGODB_URI="mongodb://$MONGODB_USERNAME:$MONGODB_PASSWORD@localhost:27017"
+        MONGODB_URI="mongodb://$MONGODB_USERNAME:$MONGODB_PASSWORD@$MONGODB_IP:27017"
 
         kubectl create secret generic tasky-app-secrets \
           --from-literal=MONGODB_URI="$MONGODB_URI" \
