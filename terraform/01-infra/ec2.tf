@@ -19,6 +19,7 @@ module "ec2_instance" {
   user_data = templatefile("${path.module}/templates/mongo-user-data-sh.tftpl",{
     mongo_uri  = var.mongo_uri
     s3_bucket  = module.s3_bucket.s3_bucket_id
+    private_ip = module.ec2_instance.private_ip
   })
 
 

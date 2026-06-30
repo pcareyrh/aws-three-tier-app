@@ -27,6 +27,10 @@ apt-get install -y \
    mongodb-org-tools=8.0.12 \
    mongodb-org-database-tools-extra=8.0.12
 
+# Mongo to listen on private interface also.
+PRIVATE_IP="${private_ip}"
+sed -i -E "s/^([[:space:]]*bindIp:[[:space:]]*).*/\1 127.0.0.1,$PRIVATE_IP/" /etc/mongod.conf
+
 # Start and enable the MongoDB service
 systemctl start mongod
 systemctl enable mongod
