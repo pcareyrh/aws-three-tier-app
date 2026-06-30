@@ -1,7 +1,7 @@
 module "ec2_instance" {
   source  = "terraform-aws-modules/ec2-instance/aws"
   # Ensure the key pair is created before the EC2 instance
-  depends_on = [ module.key_pair ]
+  depends_on = [ module.key_pair, github_actions_environment_secret.mongodb_password ]
   name = "mongo-instance"
 
   instance_type = "t3.micro"
@@ -19,7 +19,7 @@ module "ec2_instance" {
   user_data = templatefile("${path.module}/templates/mongo-user-data-sh.tftpl",{
     mongo_uri        = var.mongo_uri
     s3_bucket        = module.s3_bucket.s3_bucket_id
-    private_password = github_actions_environment_secret.mongodb_admin_password.value
+    private_password = github_actions_environment_secret.mongodb_password.value
   })
 
 
