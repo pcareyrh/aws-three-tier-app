@@ -30,6 +30,11 @@ output "ec2_instance_public_ip" {
   value       = module.ec2_instance.public_ip
 }
 
+output "ec2_instance_private_ip" {
+  description = "The private IP of the EC2 instance"
+  value       = module.ec2_instance.private_ip
+}
+
 output "ec2_key_pair_name" {
   description = "The name of the key pair"
   value       = module.key_pair.key_pair_name
