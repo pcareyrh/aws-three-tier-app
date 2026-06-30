@@ -7,6 +7,7 @@ locals {
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+  eks_cluster_name = "${var.name}-al2023"
 
   tags = {
     Example    = var.name
@@ -27,10 +28,12 @@ module "vpc" {
   enable_vpn_gateway = false
 
   public_subnet_tags = {
-    "kubernetes.io/role/elb" = "1"   # internet-facing LBs go here
+    "kubernetes.io/role/elb"                          = "1"
+    "kubernetes.io/cluster/${local.eks_cluster_name}" = "shared"
   }
   private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/role/internal-elb"                 = "1"
+    "kubernetes.io/cluster/${local.eks_cluster_name}" = "shared"
   }
 
   tags = {
