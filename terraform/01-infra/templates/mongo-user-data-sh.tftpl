@@ -29,6 +29,8 @@ apt-get install -y \
 
 # Mongo to listen on all interfaces.
 sed -i -E 's/^([[:space:]]*bindIp:[[:space:]]*).*/\1 0.0.0.0/' /etc/mongod.conf
+sed -i '/^#security:/c\security:\
+  authorization: enabled' /etc/mongod.conf
 
 # Start and enable the MongoDB service
 systemctl start mongod
