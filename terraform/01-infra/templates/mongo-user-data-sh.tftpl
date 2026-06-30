@@ -64,8 +64,8 @@ set -euo pipefail
 
 DEFAULT_MONGO_URI=${jsonencode(mongo_uri)}
 DEFAULT_S3_BUCKET=${jsonencode(s3_bucket)}
-MONGO_URI="${MONGO_URI:-$DEFAULT_MONGO_URI}"
-S3_BUCKET="${S3_BUCKET:-$DEFAULT_S3_BUCKET}"
+MONGO_URI="$${MONGO_URI:-$DEFAULT_MONGO_URI}"
+S3_BUCKET="$${S3_BUCKET:-$DEFAULT_S3_BUCKET}"
 BACKUP_TMP="/tmp/mongodb-backup"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 ARCHIVE_NAME="mongodb-"$${TIMESTAMP}".archive.gz"
