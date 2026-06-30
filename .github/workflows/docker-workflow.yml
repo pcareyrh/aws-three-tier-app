@@ -56,7 +56,7 @@ jobs:
         IMAGE_NAME: ${{ env.IMAGE_NAME }}
         IMAGE_TAG: "latest"
         EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
-        MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+        MONGODB_USERNAME: ${{ secrets.MONGODB_USER }}
         MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
         MONGODB_IP: ${{ secrets.MONGODB_IP }}
       run: |
