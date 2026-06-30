@@ -17,9 +17,10 @@ module "ec2_instance" {
   iam_instance_profile        = aws_iam_instance_profile.mongodb.name
 
   user_data = templatefile("${path.module}/templates/mongo-user-data-sh.tftpl",{
-    mongo_uri  = var.mongo_uri
-    s3_bucket  = module.s3_bucket.s3_bucket_id
-    private_ip = module.ec2_instance.private_ip
+    mongo_uri        = var.mongo_uri
+    s3_bucket        = module.s3_bucket.s3_bucket_id
+    private_ip       = module.ec2_instance.private_ip
+    private_password = github_actions_environment_secret.mongodb_admin_password.value
   })
 
 

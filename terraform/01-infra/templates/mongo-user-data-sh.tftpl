@@ -28,21 +28,45 @@ apt-get install -y \
    mongodb-org-database-tools-extra=8.0.12
 
 # Mongo to listen on private interface also.
-PRIVATE_IP="${private_ip}"
+PRIVATE_IP=${jsonencode(private_ip)}
 sed -i -E "s/^([[:space:]]*bindIp:[[:space:]]*).*/\1 127.0.0.1,$PRIVATE_IP/" /etc/mongod.conf
 
 # Start and enable the MongoDB service
 systemctl start mongod
 systemctl enable mongod
 
+#Set user and password for MongoDB
+cat > /tmp/init-mongo.js <<EOF
+use admin
+db.createUser(
+  {
+    user: "tasky",
+    pwd: ${jsonencode(private_password)},
+    roles: [
+      { role: "userAdminAnyDatabase", db: "admin" },
+      { role: "readWriteAnyDatabase", db: "admin" }
+    ]
+  }
+)
+EOF
+
+until mongosh --host 127.0.0.1 --quiet /tmp/init-mongo.js; do
+  sleep 2
+done
+
+rm -f /tmp/init-mongo.js
+
+# Configure backups
 cat > /home/ubuntu/mongo-backup.sh << 'EOF'
 #!/bin/bash
 # mongodb-backup-s3.sh
 
 set -euo pipefail
 
-MONGO_URI="$${MONGO_URI:-"$${mongo_uri}"}"
-S3_BUCKET="$${S3_BUCKET:-"$${s3_bucket}"}"
+DEFAULT_MONGO_URI=${jsonencode(mongo_uri)}
+DEFAULT_S3_BUCKET=${jsonencode(s3_bucket)}
+MONGO_URI="${MONGO_URI:-$DEFAULT_MONGO_URI}"
+S3_BUCKET="${S3_BUCKET:-$DEFAULT_S3_BUCKET}"
 BACKUP_TMP="/tmp/mongodb-backup"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 ARCHIVE_NAME="mongodb-"$${TIMESTAMP}".archive.gz"
@@ -76,4 +100,4 @@ EOF
 
 chmod +x /home/ubuntu/mongo-backup.sh
 
-echo "0 0 * * * root MONGO_URI=${mongo_uri} S3_BUCKET=${s3_bucket} /home/ubuntu/mongo-backup.sh" > /etc/cron.d/mongodb-backup
+echo "0 0 * * * root /home/ubuntu/mongo-backup.sh" > /etc/cron.d/mongodb-backup
