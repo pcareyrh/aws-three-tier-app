@@ -36,6 +36,22 @@ module "eks" {
   endpoint_public_access  = true
   enable_cluster_creator_admin_permissions = true
 
+  # Add cluster admin so that the GitHub Actions OIDC role can be used to deploy to the cluster
+  access_entries = {
+    github_actions = {
+      principal_arn = aws_iam_role.github_oidc_role.arn
+
+      policy_associations = {
+        cluster_admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
+
   eks_managed_node_groups = {
     example = {
       # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups

@@ -41,7 +41,7 @@ resource "aws_iam_role" "github_oidc_role" {
   assume_role_policy = data.aws_iam_policy_document.github_oidc_role.json
 }
 
-// policy to allow ecr push
+// policy to allow ecr push, describe, and eks access
 data "aws_iam_policy_document" "deploy" {
   statement {
     effect  = "Allow"
@@ -62,6 +62,14 @@ data "aws_iam_policy_document" "deploy" {
     effect    = "Allow"
     actions   = ["ecr:GetAuthorizationToken"]
     resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
+      "eks:DescribeCluster"
+    ]
+    resources = ["arn:aws:eks:${var.region}:${data.aws_caller_identity.current.account_id}:cluster/${local.eks_cluster_name}"]
   }
 }
 
