@@ -52,9 +52,19 @@ jobs:
 
     - name: Deploy to EKS
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}        
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_NAME: ${{ env.IMAGE_NAME }}
         IMAGE_TAG: "latest"
         EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
+        MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+        MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
       run: |
-        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG|g" 04-app-deploy/tasky-deployment.yaml
-        kubectl apply -f 04-app-deploy/tasky-deployment.yaml
+        MONGODB_URI="mongodb://$MONGODB_USERNAME:$MONGODB_PASSWORD@localhost:27017"
+
+        kubectl create secret generic tasky-app-secrets \
+          --from-literal=MONGODB_URI="$MONGODB_URI" \
+          --from-literal=SECRET_KEY="secret123" \
+          --dry-run=client -o yaml | kubectl apply -f -
+
+        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG|g" terraform/04-app-deploy/tasky-deployment.yaml
+        kubectl apply -f terraform/04-app-deploy/tasky-deployment.yaml

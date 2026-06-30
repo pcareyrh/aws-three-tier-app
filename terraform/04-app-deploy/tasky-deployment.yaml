@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tasky-service
+spec:
+  selector:
+    app: tasky-app-deployment
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tasky-public-ingress
+  annotations:
+    # Tells the controller to spin up an AWS Application Load Balancer
+    alb.ingress.kubernetes.io/ingress.class: alb
+    # Makes the ALB publicly accessible over the internet
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    # (Optional) Directs traffic directly to pods (IP mode) or EC2 nodes (instance mode)
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tasky-service
+                port:
+                  number: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: tasky-app-deployment
+  name: tasky-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasky-app-deployment
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: tasky-app-deployment
+    spec:
+      containers:
+      - image: DOCKER_IMAGE
+        name: tasky-app
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: tasky-app-secrets
+              key: MONGODB_URI
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tasky-app-secrets
+              key: SECRET_KEY
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}
