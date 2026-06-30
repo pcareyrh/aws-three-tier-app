@@ -29,8 +29,6 @@ apt-get install -y \
 
 # Mongo to listen on all interfaces.
 sed -i -E 's/^([[:space:]]*bindIp:[[:space:]]*).*/\1 0.0.0.0/' /etc/mongod.conf
-sed -i '/^#security:/c\security:\
-  authorization: enabled' /etc/mongod.conf
 
 # Start and enable the MongoDB service
 systemctl start mongod
@@ -54,6 +52,12 @@ EOF
 until mongosh --host 127.0.0.1 --quiet /home/ubuntu/init-mongo.js; do
   sleep 2
 done
+
+# Configure MongoDB to require authentication and restart
+sed -i '/^#security:/c\security:\
+  authorization: enabled' /etc/mongod.conf
+
+systemctl restart mongod
 
 #rm -f /home/ubuntu/init-mongo.js
 
