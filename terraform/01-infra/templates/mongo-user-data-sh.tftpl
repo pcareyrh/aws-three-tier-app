@@ -55,7 +55,7 @@ until mongosh --host 127.0.0.1 --quiet /tmp/init-mongo.js; do
   sleep 2
 done
 
-rm -f /tmp/init-mongo.js
+#rm -f /tmp/init-mongo.js
 
 # Configure backups
 cat > /home/ubuntu/mongo-backup.sh << 'EOF'
