@@ -18,7 +18,7 @@ resource "aws_cloudtrail" "cloudtrail" {
 }
 
 resource "aws_s3_bucket" "cloudtrail-bucket" {
-  bucket        = "${var.name}-3tier-trail"
+  bucket        = "${var.name}-cloudtrail-3tier-trail"
   force_destroy = true
 }
 
