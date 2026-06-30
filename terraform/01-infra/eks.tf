@@ -17,6 +17,18 @@ module "eks" {
     }
   }
 
+  enabled_log_types = [
+      "api",
+      "audit",
+      "authenticator",
+      "controllerManager",
+      "scheduler"
+    ]
+
+  # Optional: control the CloudWatch log group directly
+  create_cloudwatch_log_group            = true
+  cloudwatch_log_group_retention_in_days = 7
+
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
