@@ -22,6 +22,15 @@ module "ecr" {
   ]
 
   repository_read_write_access_arns = [aws_iam_role.github_oidc_role.arn]
+  
+  # allow mutable tags for latest tag, and immutable tags for all other tags
+  repository_image_tag_mutability = "MUTABLE"
+  repository_image_tag_mutability_exclusion_filter = [
+  {
+    filter      = "latest"
+    filter_type = "WILDCARD"
+  }
+]
 
   repository_lifecycle_policy = jsonencode({
     rules = [

@@ -25,3 +25,10 @@ resource "github_actions_environment_secret" "mongodb_password" {
   secret_name = "MONGODB_PASSWORD"
   value       = random_string.mongodb_password_random.result
 }
+
+resource "github_actions_environment_secret" "mongodb_ip" {
+  repository  = var.github_repo
+  environment = var.github_environment
+  secret_name = "MONGODB_IP"
+  value       = module.ec2_instance.private_ip
+}
