@@ -3,6 +3,7 @@ resource "github_actions_environment_secret" "eks_cluster_name" {
   environment = var.github_environment
   secret_name = "EKS_CLUSTER_NAME"
   value       = module.eks.cluster_name
+  depends_on  = [module.eks]
 }
 
 resource "github_actions_environment_secret" "mongodb_user" {
