@@ -66,6 +66,7 @@ jobs:
         kubectl create secret generic tasky-app-secrets \
           --from-literal=MONGODB_URI="$MONGODB_URI" \
           --from-literal=SECRET_KEY="$SECRET_KEY" \
+          --namespace tasky-ns \
           --dry-run=client -o yaml | kubectl apply -f -
 
         sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG|g" terraform/04-app-deploy/tasky-deployment.yaml
@@ -73,5 +74,5 @@ jobs:
 
     - name: Verify wiz file present
       run: |
-        kubectl wait --for=condition=Ready pod -l app=tasky-app-deployment --timeout=60s
-        kubectl exec deploy/tasky-app-deployment -- cat /app/wizexercise.txt
+        kubectl wait --for=condition=Ready pod -l app=tasky-app-deployment --namespace tasky-ns --timeout=60s
+        kubectl exec deploy/tasky-app-deployment --namespace tasky-ns -- cat /app/wizexercise.txt
