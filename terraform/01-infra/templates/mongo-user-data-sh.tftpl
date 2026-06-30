@@ -37,7 +37,7 @@ systemctl start mongod
 systemctl enable mongod
 
 #Set user and password for MongoDB
-cat > /tmp/init-mongo.js <<EOF
+cat > /home/ubuntu/init-mongo.js <<EOF
 use admin
 db.createUser(
   {
@@ -51,11 +51,11 @@ db.createUser(
 )
 EOF
 
-until mongosh --host 127.0.0.1 --quiet /tmp/init-mongo.js; do
+until mongosh --host 127.0.0.1 --quiet /home/ubuntu/init-mongo.js; do
   sleep 2
 done
 
-#rm -f /tmp/init-mongo.js
+#rm -f /home/ubuntu/init-mongo.js
 
 # Configure backups
 cat > /home/ubuntu/mongo-backup.sh << 'EOF'
