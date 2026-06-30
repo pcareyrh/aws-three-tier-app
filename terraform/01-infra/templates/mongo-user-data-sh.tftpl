@@ -31,33 +31,47 @@ apt-get install -y \
 sed -i -E 's/^([[:space:]]*bindIp:[[:space:]]*).*/\1 0.0.0.0/' /etc/mongod.conf
 
 # Start and enable the MongoDB service
-systemctl start mongod
 systemctl enable mongod
+systemctl start mongod
 
-#Set user and password for MongoDB
-cat > /home/ubuntu/init-mongo.js <<EOF
-use admin
-db.createUser(
-  {
+# Only bootstrap the admin user if authentication has not already been enabled.
+# This makes the script safe to re-run and prevents enabling auth without a user.
+if ! grep -qE '^[[:space:]]*authorization:[[:space:]]*enabled' /etc/mongod.conf; then
+
+  # Wait for MongoDB to accept connections before configuring the user.
+  until mongosh --host 127.0.0.1 --quiet --eval 'db.adminCommand({ ping: 1 })' >/dev/null 2>&1; do
+    sleep 2
+  done
+
+  # Set user and password for MongoDB (idempotent; verifies creation).
+  cat > /home/ubuntu/init-mongo.js <<EOF
+const admin = db.getSiblingDB("admin");
+if (admin.getUser("tasky") === null) {
+  admin.createUser({
     user: "tasky",
     pwd: ${jsonencode(private_password)},
     roles: [
       { role: "userAdminAnyDatabase", db: "admin" },
       { role: "readWriteAnyDatabase", db: "admin" }
     ]
-  }
-)
+  });
+}
+if (admin.getUser("tasky") === null) {
+  throw new Error("Failed to create MongoDB user 'tasky'");
+}
 EOF
 
-until mongosh --host 127.0.0.1 --quiet /home/ubuntu/init-mongo.js; do
-  sleep 2
-done
+  # Retry until the user is created and verified.
+  until mongosh --host 127.0.0.1 --quiet /home/ubuntu/init-mongo.js; do
+    sleep 2
+  done
 
-# Configure MongoDB to require authentication and restart
-sed -i '/^#security:/c\security:\
+  # Enable authentication only after the user is confirmed to exist, then restart.
+  sed -i '/^#security:/c\security:\
   authorization: enabled' /etc/mongod.conf
 
-systemctl restart mongod
+  systemctl restart mongod
+fi
 
 #rm -f /home/ubuntu/init-mongo.js
 
