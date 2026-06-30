@@ -53,7 +53,6 @@ module "eks" {
 }
 
 resource "github_actions_environment_secret" "eks_cluster_name" {
-  count       = var.manage_github_environment_secret ? 1 : 0
   repository  = var.github_repo
   environment = var.github_environment
   secret_name = "EKS_CLUSTER_NAME"

@@ -1,7 +1,11 @@
+locals {
+  cloudtrail_name = "${var.name}-cloudtrail-logs-3tier"
+}
+
 resource "aws_cloudtrail" "cloudtrail" {
   depends_on = [aws_s3_bucket_policy.cloudtrail-bucket]
 
-  name                          = "${var.name}-cloudtrail-logs-3tier"
+  name                          = local.cloudtrail_name
   s3_bucket_name                = aws_s3_bucket.cloudtrail-bucket.id
   s3_key_prefix                 = "3tier-app"
   include_global_service_events = true
@@ -43,7 +47,7 @@ data "aws_iam_policy_document" "cloudtrail-policy" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceArn"
-      values   = ["arn:${data.aws_partition.current.partition}:cloudtrail:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:trail/example"]
+      values   = ["arn:${data.aws_partition.current.partition}:cloudtrail:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:trail/${local.cloudtrail_name}"]
     }
   }
 
@@ -67,7 +71,7 @@ data "aws_iam_policy_document" "cloudtrail-policy" {
     condition {
       test     = "StringEquals"
       variable = "aws:SourceArn"
-      values   = ["arn:${data.aws_partition.current.partition}:cloudtrail:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:trail/example"]
+      values   = ["arn:${data.aws_partition.current.partition}:cloudtrail:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:trail/${local.cloudtrail_name}"]
     }
   }
 }
