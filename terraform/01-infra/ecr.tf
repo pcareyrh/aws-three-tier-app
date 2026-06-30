@@ -1,8 +1,8 @@
 module "ecr" {
   source = "terraform-aws-modules/ecr/aws"
 
-  repository_name = "${var.name}-ecr-private"
-
+#  repository_name = "${var.name}-ecr-private"
+  repository_name = "tasky-app"
   repository_force_delete = true
 
   //repository_read_write_access_arns = ["arn:aws:iam::012345678901:role/terraform"]
@@ -14,7 +14,7 @@ module "ecr" {
       scan_frequency = "SCAN_ON_PUSH"
       filter = [
         {
-          filter      = "${var.name}-ecr-private"
+          filter      = "tasky-app"
           filter_type = "WILDCARD"
         }
       ]
