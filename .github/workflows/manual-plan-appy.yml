@@ -43,7 +43,7 @@ jobs:
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
 
   infra-apply:
-    needs: [infra-job, k8s-setup-job]
+    needs: [infra-job]
     name: "Terraform Apply"
     runs-on: ubuntu-latest
     permissions: # granular permissions
