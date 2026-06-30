@@ -62,7 +62,8 @@ jobs:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         MONGODB_URI="mongodb://$MONGODB_USERNAME:$MONGODB_PASSWORD@$MONGODB_IP:27017"
-
+        
+        kubectl create namespace tasky-ns --dry-run=client -o yaml | kubectl apply -f -
         kubectl create secret generic tasky-app-secrets \
           --from-literal=MONGODB_URI="$MONGODB_URI" \
           --from-literal=SECRET_KEY="$SECRET_KEY" \
