@@ -21,6 +21,8 @@ jobs:
         uses: snyk/actions/golang@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --file=tasky/tasky/go.mod
           
   build-and-push:
     runs-on: ubuntu-latest
