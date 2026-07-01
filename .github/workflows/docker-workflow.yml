@@ -14,7 +14,7 @@ permissions:
   security-events: write
 
 jobs:
-  security:
+  snyk-go-scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
