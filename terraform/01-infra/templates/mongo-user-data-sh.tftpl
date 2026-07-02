@@ -82,7 +82,7 @@ cat > /home/ubuntu/mongo-backup.sh << 'EOF'
 
 set -euo pipefail
 
-DEFAULT_MONGO_URI=${jsonencode(mongo_uri)}
+DEFAULT_MONGO_URI=${jsonencode("mongodb://tasky:${private_password}@127.0.0.1:27017/?authSource=admin")}
 DEFAULT_S3_BUCKET=${jsonencode(s3_bucket)}
 MONGO_URI="$${MONGO_URI:-$DEFAULT_MONGO_URI}"
 S3_BUCKET="$${S3_BUCKET:-$DEFAULT_S3_BUCKET}"
